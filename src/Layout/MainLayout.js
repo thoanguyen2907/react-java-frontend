@@ -9,10 +9,15 @@ import {Layout, Menu} from "antd";
 import React, {useState} from "react";
 import "./MainLayout.css";
 import TableData from "../Component/TableData";
+import StudentDrawerForm from "../Component/StudentDrawerForm";
+import StudentDrawerFormEdit from "../Component/StudentDrawerFormEdit";
 const {Header, Sider, Content} = Layout;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [showDrawerEdit, setShowDrawerEdit] = useState(false);
+  const [studentData, setStudentData] = useState({});
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -55,6 +60,15 @@ const MainLayout = () => {
             }
           )}
         </Header>
+        <StudentDrawerFormEdit
+          showDrawerEdit={showDrawerEdit}
+          setShowDrawerEdit={setShowDrawerEdit}
+          studentData={studentData}
+        />
+        <StudentDrawerForm
+          showDrawer={showDrawer}
+          setShowDrawer={setShowDrawer}
+        />
         <Content
           className="site-layout-background"
           style={{
@@ -63,7 +77,13 @@ const MainLayout = () => {
             minHeight: 280,
           }}
         >
-          <TableData />
+          <TableData
+            showDrawer={showDrawer}
+            setShowDrawer={setShowDrawer}
+            showDrawerEdit={showDrawerEdit}
+            setShowDrawerEdit={setShowDrawerEdit}
+            setStudentData={setStudentData}
+          />
         </Content>
       </Layout>
     </Layout>

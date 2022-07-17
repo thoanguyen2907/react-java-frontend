@@ -19,10 +19,10 @@ export const useStudents = () => {
   return students;
 };
 
-export const addNewStudent = async (student) => {
-  return await axios.post("api/v1/students", student, {
+export const addNewStudent = async (formData) => {
+  return await axios.post("api/v1/students/upload-file", formData, {
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

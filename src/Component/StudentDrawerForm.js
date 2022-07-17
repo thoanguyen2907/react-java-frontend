@@ -10,72 +10,31 @@ function StudentDrawerForm({showDrawer, setShowDrawer}) {
   const onCLose = () => setShowDrawer(false);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
-  const onFinish = async (student) => {
-    let updateStudent = {...student, image: "photo.png"};
-    console.log("updateStudent", updateStudent);
-    await addNewStudent(student)
-      .then((res) => console.log(res))
+  const [fileImg, setFileImg] = useState({});
+  const onFinish = async (values) => {
+    let formData = new FormData();
+
+    let student = {...values, avatar: imageUrl};
+    JSON.stringify(student);
+    formData.append("file", fileImg);
+    console.log(typeof fileImg);
+    formData.append("student", student);
+    await addNewStudent(formData)
+      .then((res) => console.okaylog(res))
       .catch((err) => console.log(err));
   };
 
   const onFinishFailed = (errorInfo) => {
     alert(JSON.stringify(errorInfo, null, 2));
   };
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result));
-    reader.readAsDataURL(img);
-  };
 
-  const handleChange = async (info) => {
-    const file = info.fileList[0].originFileObj;
-    const formData = new FormData();
-    console.log(info);
-    formData.append("file", file);
-    getBase64(info.file.originFileObj, async (url) => {
-      setImageUrl(url);
-    });
-    try {
-      await axios
-        .post("api/v1/students/upload-file", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-    // if (info.file.status === "uploading") {
-    //   console.log(info.file.status);
-    //   setLoading(true);
-    //   return;
-    // }
-    // if (info.file.status === "done") {
-    //   getBase64(info.file.originFileObj, async (url) => {
-    //     const formData = new FormData();
-    //     formData.append("image", info.file.originFileObj);
-    //     console.log(info.file.originFileObj);
-    //     setImageUrl(url);
-    //     try {
-    //       const config = {
-    //         headers: {
-    //           "Content-Type": "multipart/form-data",
-    //         },
-    //       };
-    //       const {data} = await axios.post(
-    //         "api/v1/students/upload-file",
-    //         formData,
-    //         config
-    //       );
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   });
-    // }
+  const handleChangeFile = (e) => {
+    //Lấy file ra từ e
+    let file = e.target.files[0];
+    setFileImg(file);
+    setImageUrl(e.target.files[0].name);
   };
+  console.log(imageUrl);
   return (
     <Drawer
       title="Create new student"
@@ -135,15 +94,12 @@ function StudentDrawerForm({showDrawer, setShowDrawer}) {
               </Select>
             </Form.Item>
           </Col>
-          <Form.Item>
-            <Upload
-              name="image"
-              listType="picture-card"
-              className="avatar-uploader"
-              onChange={handleChange}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
+          <Form.Item name="avatar">
+            <input
+              type="file"
+              onChange={handleChangeFile}
+              accept="image/png, image/jpeg,image/gif,image/png"
+            />
           </Form.Item>
         </Row>
         <Row>
